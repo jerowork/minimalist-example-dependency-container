@@ -6,6 +6,8 @@ namespace Jerowork\DependencyContainer;
 
 final class Container
 {
+    private array $instantiated = [];
+
     /**
      * @param array<string, callable(Container): object> $definitions
      */
@@ -15,6 +17,12 @@ final class Container
 
     public function get(string $key): object
     {
-        return $this->definitions[$key]($this);
+        if (isset($this->instantiated[$key])) {
+            return $this->instantiated[$key];
+        }
+
+        $this->instantiated[$key] = $this->definitions[$key]($this);
+
+        return $this->instantiated[$key];
     }
 }
